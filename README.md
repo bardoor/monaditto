@@ -5,7 +5,7 @@
 [![Hex.pm Downloads](https://img.shields.io/hexpm/dt/monaditto.svg)](https://hex.pm/packages/monaditto)
 [![Documentation](https://img.shields.io/badge/docs-hexdocs-blue.svg)](https://hexdocs.pm/monaditto)
 
-> *"Finally, monads in Elixir that don't make you want to become a JavaScript developer"*
+> *"Behold, traveler, and let thine eyes witness monads for Elixir, lest they transform thee into a basement-dwelling dev and hikki of code"*
 
 A pragmatic monad library for Elixir that works with your existing `{:ok, value} | {:error, reason}` code. No fancy wrapper types, no category theory PhD required, just good old Elixir tuples doing monad things.
 
