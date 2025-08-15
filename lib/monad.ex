@@ -305,7 +305,7 @@ defmodule Monad do
     get_payload(data)
   end
 
-  def unwrap!(data), do: raise("Error: #{get_payload(data)}")
+  def unwrap!(data), do: raise("Error: #{inspect(get_payload(data))}")
 
   @doc ~S"""
   Combines map and sequence functions
