@@ -1,7 +1,5 @@
 defmodule Monad do
   @moduledoc """
-  # Monaditto
-
   ## Introduction
   Hi there!
   This is a library for monads in Elixir - not with new structures, but with idiomatic Elixir tuples
