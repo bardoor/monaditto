@@ -61,7 +61,7 @@ Add `monaditto` to your list of dependencies in `mix.exs`:
 ```elixir
 def deps do
   [
-    {:monaditto, "~> 0.2.0"}
+    {:monaditto, "~> 0.3.0"}
   ]
 end
 ```
