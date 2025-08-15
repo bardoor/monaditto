@@ -328,13 +328,29 @@ defmodule Monad do
   ...> {:ok, [4, 8, 12, 20]}
   ```
   """
-  def traverse(data, fun) when is_list(data) do
-    Enum.reduce_while(data, {:ok, []}, fn value, acc ->
-      payload = get_payload(value)
-      acc_payload = get_payload(acc)
-      new_data = fun.(payload)
 
-      if is_ok(value) and is_ok(acc) and is_ok(new_data) do
+  def traverse(data, fun) when is_ok(data) do
+    payload = get_payload(data)
+    result = fun.(payload)
+    result
+  end
+
+  def traverse(data, _fun) when is_error(data), do: data
+
+  def traverse(data, fun) do
+    if Enumerable.impl_for(data) do
+      do_traverse(data, fun)
+    else
+      data
+    end
+  end
+
+  def do_traverse(data, fun) do
+    Enum.reduce_while(data, {:ok, []}, fn value, acc ->
+      acc_payload = get_payload(acc)
+      new_data = fun.(value)
+
+      if is_ok(acc) and is_ok(new_data) do
         new_payload = get_payload(new_data)
         values = prepend_nonempty(acc_payload, new_payload)
         {:cont, create_ok(values)}
@@ -344,8 +360,6 @@ defmodule Monad do
     end)
     |> reverse_payload()
   end
-
-  def traverse(data, fun), do: map(data, fun)
 
   @doc ~S"""
   Checks if there is any error in the data, without nested values checking
