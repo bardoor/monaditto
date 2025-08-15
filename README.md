@@ -1,4 +1,4 @@
-# Monaditto 🎭
+# Monaditto
 
 > *"Finally, monads in Elixir that don't make you want to become a JavaScript developer"*
 
