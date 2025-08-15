@@ -347,7 +347,7 @@ defmodule Monad do
     end
   end
 
-  def do_traverse(data, fun) do
+  defp do_traverse(data, fun) do
     Enum.reduce_while(data, {:ok, []}, fn value, acc ->
       acc_payload = get_payload(acc)
       new_data = fun.(value)
