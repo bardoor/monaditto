@@ -156,6 +156,7 @@ defmodule Monad do
 
   iex> Monad.map_error(:error, fn reason -> "Error: #{reason}" end)
   ...> :error
+  ```
   """
   def map_error(data, fun) when is_error(data) do
     data
@@ -186,6 +187,7 @@ defmodule Monad do
   ...> |> Monad.flat_map(fn {name, age} -> {:ok, name, age * 2} end)
   ...> |> Monad.flat_map(fn {name, age} -> {:ok, "#{name} is #{age} years old"} end)
   ...> {:error, :not_found}
+  ```
   """
   def flat_map(data, fun) when is_list(data) do
     Enum.reduce_while(data, {:ok, []}, fn value, acc ->
@@ -402,6 +404,7 @@ defmodule Monad do
 
   iex> Monad.all_ok?([{:ok, "John"}, {:error, :not_found}, {:ok, "Jane"}])
   ...> false
+  ```
   """
   def all_ok?(data) when is_list(data) do
     Enum.all?(data, &is_ok/1)
