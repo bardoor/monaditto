@@ -45,6 +45,10 @@ defmodule Monad do
   Other examples you could find in the documentation for dedicated functions
   """
 
+  @type ok() :: {:ok, any()} | :ok
+  @type error() :: {:error, any()} | :error
+  @type result() :: ok() | error()
+
   defguardp is_ok(value) when is_tuple(value) and elem(value, 0) == :ok or value == :ok
   defguardp is_error(value) when is_tuple(value) and elem(value, 0) == :error or value == :error
 
@@ -94,6 +98,7 @@ defmodule Monad do
     ...> {:ok, ["John", "Brother Tom"]}
   ```
   """
+  @spec sequence([result()], :until_error) :: result()
   def sequence(data, strategy \\ :until_error)
 
   def sequence(data, :until_error) do
@@ -134,6 +139,7 @@ defmodule Monad do
   ...> {:ok, "Hello, John! John's info"}
   ```
   """
+  @spec map(result(), (any() -> any())) :: result()
   def map(data, fun) when is_ok(data) do
     data
     |> get_payload()
@@ -158,6 +164,7 @@ defmodule Monad do
   ...> :error
   ```
   """
+  @spec map_error(result(), (any() -> any())) :: result()
   def map_error(data, fun) when is_error(data) do
     data
     |> get_payload()
@@ -189,6 +196,7 @@ defmodule Monad do
   ...> {:error, :not_found}
   ```
   """
+  @spec flat_map(list(result()), (any() -> result())) :: result()
   def flat_map(data, fun) when is_list(data) do
     Enum.reduce_while(data, {:ok, []}, fn value, acc ->
       payload = get_payload(value)
@@ -234,6 +242,7 @@ defmodule Monad do
   ...> {:error, "Error: not_found"}
   ```
   """
+  @spec bimap(result(), (any() -> any()), (any() -> any())) :: result()
   def bimap(data, success_fun, _error_fun) when is_ok(data) do
     data
     |> get_payload()
@@ -260,6 +269,7 @@ defmodule Monad do
   ...> {:error, :not_found}
   ```
   """
+  @spec peek(result(), (any() -> any())) :: result()
   def peek(data, fun) do
     data
     |> get_payload()
@@ -283,6 +293,7 @@ defmodule Monad do
   ...> nil
   ```
   """
+  @spec unwrap(result(), any()) :: any()
   def unwrap(data, default \\ nil)
 
   def unwrap(data, _default) when is_ok(data) do
@@ -303,6 +314,7 @@ defmodule Monad do
   ...> ** (RuntimeError) Error: not_found
   ```
   """
+  @spec unwrap!(result()) :: any()
   def unwrap!(data) when is_ok(data) do
     get_payload(data)
   end
@@ -330,7 +342,7 @@ defmodule Monad do
   ...> {:ok, [4, 8, 12, 20]}
   ```
   """
-
+  @spec traverse([result()] | result(), (any() -> result())) :: result()
   def traverse(data, fun) when is_ok(data) do
     payload = get_payload(data)
     result = fun.(payload)
@@ -381,6 +393,7 @@ defmodule Monad do
   ...> true
   ```
   """
+  @spec any_error?([result()] | result()) :: boolean()
   def any_error?(data) when is_list(data) do
     Enum.any?(data, &is_error/1)
   end
@@ -406,6 +419,7 @@ defmodule Monad do
   ...> false
   ```
   """
+  @spec all_ok?([result()] | result()) :: boolean()
   def all_ok?(data) when is_list(data) do
     Enum.all?(data, &is_ok/1)
   end
@@ -430,6 +444,7 @@ defmodule Monad do
   ...> {:ok, "Success"}
   ```
   """
+  @spec safe((() -> any()), (() -> any())) :: result()
   def safe(fun, after_fun \\ fn -> nil end) do
     try do
       {:ok, fun.()}
