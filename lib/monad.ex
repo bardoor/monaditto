@@ -251,14 +251,14 @@ defmodule Monad do
 
   ## Examples
   ```elixir
-  iex> Monad.tap({:ok, "John"}, fn name -> IO.puts("Hello, #{name}!") end)
+  iex> Monad.peek({:ok, "John"}, fn name -> IO.puts("Hello, #{name}!") end)
   ...> {:ok, "John"}
 
-  iex> Monad.tap({:error, :not_found}, fn reason -> IO.puts("Error: #{reason}") end)
+  iex> Monad.peek({:error, :not_found}, fn reason -> IO.puts("Error: #{reason}") end)
   ...> {:error, :not_found}
   ```
   """
-  def tap(data, fun) do
+  def peek(data, fun) do
     data
     |> get_payload()
     |> fun.()
