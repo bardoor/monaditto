@@ -46,8 +46,6 @@ end
 
 But with `Monaditto` you can rock it even better!
 
-*Narrator: "There had to be a better way."*
-
 ## The Better Way™
 
 ```elixir
@@ -74,27 +72,25 @@ end
 ## Quick Start
 
 ```elixir
-import Monad
-
 # Basic mapping
 {:ok, "hello"}
-|> map(&String.upcase/1)
-|> map(&String.reverse/1)
+|> Monad.map(&String.upcase/1)
+|> Monad.map(&String.reverse/1)
 # => {:ok, "OLLEH"}
 
 # Error short-circuiting
 {:error, :oops}
-|> map(&String.upcase/1)  # Nope, not happening
-|> map(&String.reverse/1) # Still nope
+|> Monad.map(&String.upcase/1)  # Nope, not happening
+|> Monad.map(&String.reverse/1) # Still nope
 # => {:error, :oops}
 
 # Safe operations
-safe(fn -> 1 / 0 end)
+Monad.safe(fn -> 1 / 0 end)
 # => {:error, %ArithmeticError{...}}
 
 # Processing lists
 [{:ok, 1}, {:ok, 2}, {:ok, 3}]
-|> traverse(&({:ok, &1 * 2}))
+|> Monad.traverse(&({:ok, &1 * 2}))
 # => {:ok, [2, 4, 6]}
 ```
 
