@@ -193,9 +193,14 @@ defmodule Monad do
       acc_payload = get_payload(acc)
 
       if is_ok(value) and is_ok(acc) do
-        new_payload = fun.(payload)
-        values = prepend_nonempty(acc_payload, new_payload)
-        {:cont, create_ok(values)}
+        new_data = fun.(payload)
+        if is_ok(new_data) do
+          new_payload = get_payload(new_data)
+          values = prepend_nonempty(acc_payload, new_payload)
+          {:cont, create_ok(values)}
+        else
+          {:halt, new_data}
+        end
       else
         {:halt, create_error(payload)}
       end
@@ -203,7 +208,12 @@ defmodule Monad do
     |> reverse_payload()
   end
 
-  def flat_map(data, fun), do: map(data, fun)
+  def flat_map(data, fun) when is_ok(data) do
+    payload = get_payload(data)
+    fun.(payload)
+  end
+
+  def flat_map(data, _fun) when is_error(data), do: data
 
   @doc ~S"""
   Applies a function if data is successful (`{:ok, ...}`), otherwise applies another function
