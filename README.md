@@ -1,4 +1,9 @@
-# Monaditto
+# Monaditto 🎭
+
+[![Elixir CI](https://github.com/bardoor/monaditto/actions/workflows/elixir.yml/badge.svg)](https://github.com/bardoor/monaditto/actions/workflows/elixir.yml)
+[![Hex.pm Version](https://img.shields.io/hexpm/v/monaditto.svg)](https://hex.pm/packages/monaditto)
+[![Hex.pm Downloads](https://img.shields.io/hexpm/dt/monaditto.svg)](https://hex.pm/packages/monaditto)
+[![Documentation](https://img.shields.io/badge/docs-hexdocs-blue.svg)](https://hexdocs.pm/monaditto)
 
 > *"Finally, monads in Elixir that don't make you want to become a JavaScript developer"*
 
