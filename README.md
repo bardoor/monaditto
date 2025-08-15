@@ -1,4 +1,4 @@
-# Monaditto 🎭
+# Monaditto
 
 [![Elixir CI](https://github.com/bardoor/monaditto/actions/workflows/elixir.yml/badge.svg)](https://github.com/bardoor/monaditto/actions/workflows/elixir.yml)
 [![Hex.pm Version](https://img.shields.io/hexpm/v/monaditto.svg)](https://hex.pm/packages/monaditto)
