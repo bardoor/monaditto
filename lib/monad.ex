@@ -260,18 +260,16 @@ defmodule Monad do
 
   ## Examples
   ```elixir
-  iex> Monad.peek({:ok, "John"}, fn name -> IO.puts("Hello, #{name}!") end)
+  iex> Monad.peek({:ok, "John"}, fn {:ok, name} -> IO.puts("Hello, #{name}!") end)
   ...> {:ok, "John"}
 
-  iex> Monad.peek({:error, :not_found}, fn reason -> IO.puts("Error: #{reason}") end)
+  iex> Monad.peek({:error, :not_found}, fn {:error, reason} -> IO.puts("Error: #{reason}") end)
   ...> {:error, :not_found}
   ```
   """
   @spec peek(result(), (any() -> any())) :: result()
   def peek(data, fun) do
-    data
-    |> get_payload()
-    |> fun.()
+    safe(fn -> fun.(data) end)
 
     data
   end
