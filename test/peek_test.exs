@@ -28,50 +28,50 @@ defmodule PeekTest do
       assert result == original
     end
 
-    test "calls function with payload from {:ok, value}" do
+    test "calls function with full tuple from {:ok, value}" do
       test_pid = self()
 
-      peek({:ok, "John"}, fn name ->
-        send(test_pid, {:called_with, name})
+      peek({:ok, "John"}, fn data ->
+        send(test_pid, {:called_with, data})
       end)
 
-      assert_receive {:called_with, "John"}
+      assert_receive {:called_with, {:ok, "John"}}
     end
 
-    test "calls function with payload from {:error, reason}" do
+    test "calls function with full tuple from {:error, reason}" do
       test_pid = self()
 
-      peek({:error, :not_found}, fn reason ->
-        send(test_pid, {:called_with, reason})
+      peek({:error, :not_found}, fn data ->
+        send(test_pid, {:called_with, data})
       end)
 
-      assert_receive {:called_with, :not_found}
+      assert_receive {:called_with, {:error, :not_found}}
     end
 
-    test "calls function with tuple payload" do
+    test "calls function with full tuple for complex data" do
       test_pid = self()
 
-      peek({:ok, "John", 25}, fn {name, age} ->
-        send(test_pid, {:called_with, name, age})
+      peek({:ok, "John", 25}, fn data ->
+        send(test_pid, {:called_with, data})
       end)
 
-      assert_receive {:called_with, "John", 25}
+      assert_receive {:called_with, {:ok, "John", 25}}
     end
 
-    test "calls function with empty payload from atoms" do
+    test "calls function with atom values" do
       test_pid = self()
 
-      peek(:ok, fn payload ->
-        send(test_pid, {:called_with, payload})
+      peek(:ok, fn data ->
+        send(test_pid, {:called_with, data})
       end)
 
-      assert_receive {:called_with, {}}
+      assert_receive {:called_with, :ok}
 
-      peek(:error, fn payload ->
-        send(test_pid, {:called_with, payload})
+      peek(:error, fn data ->
+        send(test_pid, {:called_with, data})
       end)
 
-      assert_receive {:called_with, {}}
+      assert_receive {:called_with, :error}
     end
 
     test "can be used for side effects like logging" do
@@ -87,7 +87,7 @@ defmodule PeekTest do
         |> map(fn name -> String.upcase(name) end)
 
       assert result == {:ok, "JOHN"}
-      assert_receive {:logged, "Processing: \"John\""}
+      assert_receive {:logged, "Processing: {:ok, \"John\"}"}
     end
 
     test "ignores return value of peekped function" do
@@ -100,12 +100,12 @@ defmodule PeekTest do
       assert result == original
     end
 
-    test "handles function that raises exception" do
+    test "handles function that raises exception safely" do
       original = {:ok, "John"}
 
-      assert_raise RuntimeError, "test error", fn ->
-        peek(original, fn _ -> raise "test error" end)
-      end
+      result = peek(original, fn _ -> raise "test error" end)
+
+      assert result == original
     end
 
     test "works in pipeline for debugging" do
@@ -113,14 +113,14 @@ defmodule PeekTest do
 
       result =
         {:ok, 5}
-        |> peek(fn x -> send(test_pid, {:step1, x}) end)
+        |> peek(fn data -> send(test_pid, {:step1, data}) end)
         |> map(fn x -> x * 2 end)
-        |> peek(fn x -> send(test_pid, {:step2, x}) end)
+        |> peek(fn data -> send(test_pid, {:step2, data}) end)
         |> map(fn x -> x + 1 end)
 
       assert result == {:ok, 11}
-      assert_receive {:step1, 5}
-      assert_receive {:step2, 10}
+      assert_receive {:step1, {:ok, 5}}
+      assert_receive {:step2, {:ok, 10}}
     end
   end
 end
